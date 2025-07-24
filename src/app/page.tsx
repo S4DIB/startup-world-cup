@@ -45,26 +45,24 @@ export default function Home() {
   // Header styles
   const headerStyle = {
     width: '100vw',
-    padding: '1.5rem 0 1rem 0',
+    padding: '0.5rem clamp(1rem, 4vw, 2.5rem)',
     position: 'fixed' as 'fixed',
     top: '0',
     left: '0',
     zIndex: 10,
     background: 'rgba(10,10,35,0.85)',
     borderBottom: '2px solid #3b82f6', // Tailwind blue-500
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     boxShadow: '0 2px 16px 0 rgba(0,0,0,0.12)',
     fontFamily: 'Kode Mono, monospace',
-    paddingLeft: '2.5rem',
-    paddingRight: '2.5rem',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   };
   const navLinkStyle =
     'text-white text-lg font-kode-mono px-4 py-1 rounded transition-colors duration-200 hover:text-blue-400 hover:bg-blue-900/40';
 
   // Header DecryptedText loop logic
-  const headerPhrases = ["AI CTO AGENT", "Create history"];
+  const headerPhrases = ["AI CTO AGENT", "CREATE HISTORY"];
   const [headerIndex, setHeaderIndex] = useState(0);
   const [headerKey, setHeaderKey] = useState(0); // to force re-mount for animation
   useEffect(() => {
@@ -78,18 +76,20 @@ export default function Home() {
   return (
     <>
       <header style={headerStyle}>
-        <DecryptedText
-          key={headerKey}
-          text={headerPhrases[headerIndex]}
-          className="text-white text-2xl sm:text-3xl font-extrabold tracking-widest font-kode-mono"
-          duration={1200}
-        />
-        <nav style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <a href="#" className={navLinkStyle}>Home</a>
-          <a href="#pricing" className={navLinkStyle}>Pricing</a>
-          <a href="#contact" className={navLinkStyle}>Contact</a>
-          <a href="#ctc" className={navLinkStyle + ' bg-blue-500 text-white hover:bg-blue-700 ml-2 px-5'}>CTC</a>
-        </nav>
+        <div style={{ width: '100%', maxWidth: 1200, display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 0 }}>
+          <DecryptedText
+            key={headerKey}
+            text={headerPhrases[headerIndex]}
+            className="text-white text-xl sm:text-2xl font-extrabold tracking-widest font-kode-mono truncate"
+            duration={1200}
+          />
+          <nav style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', minWidth: 0 }}>
+            <a href="#" className={navLinkStyle}>Home</a>
+            <a href="#pricing" className={navLinkStyle}>Pricing</a>
+            <a href="#contact" className={navLinkStyle}>Contact</a>
+            <a href="#ctc" className={navLinkStyle + ' bg-blue-500 text-white hover:bg-blue-700 ml-2 px-5'}>CTC</a>
+          </nav>
+        </div>
       </header>
       <div style={{ position: 'fixed', inset: 0, background: '#000000', zIndex: 0 }}>
         <Particles
@@ -135,6 +135,7 @@ export default function Home() {
               onDone={() => setShowSecond(true)}
               cursorCharacter="_"
               showCursor={!showSecond}
+              delay={0}
             />
             <div style={{ minHeight: '1.2em', width: '100%', display: 'flex', justifyContent: 'center' }}>
               <TypewriterEffectSmooth
