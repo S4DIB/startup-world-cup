@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Particles from "../components/Particles";
 import { TypewriterEffectSmooth } from "../components/ui/typewriter-effect";
+import { Button } from "../components/ui/button";
 
 export default function Home() {
   const [showSecond, setShowSecond] = useState(false);
@@ -51,28 +52,47 @@ export default function Home() {
             onDone={() => setShowSecond(true)}
             cursorCharacter="_"
           />
-          {showSecond && (
-            <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', width: '100%' }}>
-              <TypewriterEffectSmooth
-                words={[
-                  { text: "Let" },
-                  { text: "your" },
-                  { text: "AI" },
-                  { text: "CTO" },
-                  { text: "handle" },
-                  { text: "all" },
-                  { text: "the" },
-                  { text: "technical" },
-                  { text: "heavy" },
-                  { text: "lifting." },
-                ]}
-                className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono"
-                cursorClassName="bg-white"
-                cursorCharacter="_"
-                fadeIn={true}
-              />
-            </div>
-          )}
+          <div style={{ minHeight: '1.2em', width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <TypewriterEffectSmooth
+              words={
+                showSecond
+                  ? [
+                      { text: "Let" },
+                      { text: "your" },
+                      { text: "AI" },
+                      { text: "CTO" },
+                      { text: "handle" },
+                      { text: "all" },
+                      { text: "the" },
+                      { text: "technical" },
+                      { text: "heavy" },
+                      { text: "lifting." },
+                    ]
+                  : [
+                      { text: "Let".replace(/./g, ' ') },
+                      { text: "your".replace(/./g, ' ') },
+                      { text: "AI".replace(/./g, ' ') },
+                      { text: "CTO".replace(/./g, ' ') },
+                      { text: "handle".replace(/./g, ' ') },
+                      { text: "all".replace(/./g, ' ') },
+                      { text: "the".replace(/./g, ' ') },
+                      { text: "technical".replace(/./g, ' ') },
+                      { text: "heavy".replace(/./g, ' ') },
+                      { text: "lifting.".replace(/./g, ' ') },
+                    ]
+              }
+              className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono"
+              cursorClassName="bg-white"
+              cursorCharacter={showSecond ? "_" : undefined}
+              fadeIn={showSecond}
+              showCursor={showSecond}
+            />
+          </div>
+          {/* Buttons below the animated text */}
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '4rem' }}>
+            <Button variant="default" size="lg">Try Me</Button>
+            <Button variant="secondary" size="lg">Contact Us</Button>
+          </div>
         </div>
       </div>
     </div>

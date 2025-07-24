@@ -105,6 +105,7 @@ export const TypewriterEffectSmooth = ({
   onDone,
   cursorCharacter,
   fadeIn = false, // <-- add fadeIn prop
+  showCursor = true,
 }: {
   words: {
     text: string;
@@ -115,6 +116,7 @@ export const TypewriterEffectSmooth = ({
   onDone?: () => void;
   cursorCharacter?: string;
   fadeIn?: boolean; // <-- add fadeIn prop
+  showCursor?: boolean;
 }) => {
   // split text inside of words into array of characters
   const wordsArray = words.map((word) => {
@@ -175,7 +177,7 @@ export const TypewriterEffectSmooth = ({
           {renderWords()} {" "}
         </div> {" "}
       </motion.div>
-      {cursorCharacter ? (
+      {showCursor && (cursorCharacter ? (
         <motion.span
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -195,7 +197,7 @@ export const TypewriterEffectSmooth = ({
             cursorClassName
           )}
         ></motion.span>
-      )}
+      ))}
     </div>
   );
   if (fadeIn) {
