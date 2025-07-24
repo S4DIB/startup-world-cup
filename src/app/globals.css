@@ -1,5 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+
+.font-kode-mono {
+  font-family: 'Kode Mono', monospace !important;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -118,6 +123,10 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+}
+
+:root, html, body, .font-kode-mono {
+  font-family: 'Kode Mono', monospace !important;
 }
 
 @layer base {
