@@ -42,6 +42,28 @@ const DecryptedText = ({ text, className = "", duration = 1200 }: DecryptedTextP
 export default function Home() {
   const [showSecond, setShowSecond] = useState(false);
 
+  // Glitch effect state
+  const [glitch, setGlitch] = useState(false);
+  useEffect(() => {
+    let glitchInterval: NodeJS.Timeout;
+    let glitchTimeout: NodeJS.Timeout;
+    if (showSecond) {
+      // Wait for the second line to finish animating (1s), then start glitch loop
+      glitchTimeout = setTimeout(() => {
+        setGlitch(true);
+        glitchInterval = setInterval(() => {
+          setGlitch(true);
+          setTimeout(() => setGlitch(false), 700); // glitch for 0.7s
+        }, 5000);
+        setTimeout(() => setGlitch(false), 700); // initial glitch
+      }, 1000);
+    }
+    return () => {
+      clearTimeout(glitchTimeout);
+      clearInterval(glitchInterval);
+    };
+  }, [showSecond]);
+
   // Header styles
   const headerStyle = {
     width: '100vw',
@@ -116,77 +138,78 @@ export default function Home() {
               pointerEvents: 'auto',
             }}
           >
-            <TypewriterEffectSmooth
-              words={[
-                { text: "Not" },
-                { text: "sure" },
-                { text: "how" },
-                { text: "to" },
-                { text: "turn" },
-                { text: "your" },
-                { text: "tech" },
-                { text: "idea" },
-                { text: "into" },
-                { text: "a" },
-                { text: "startup?" },
-              ]}
-              className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono mb-4"
-              cursorClassName="bg-white"
-              onDone={() => setShowSecond(true)}
-              cursorCharacter="_"
-              showCursor={!showSecond}
-              delay={0}
-            />
-            <div style={{ minHeight: '1.2em', width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <div className={glitch ? 'glitch' : ''}>
               <TypewriterEffectSmooth
-                words={
-                  showSecond
-                    ? [
-                        { text: "Let" },
-                        { text: "your" },
-                        { text: "AI" },
-                        { text: "CTO" },
-                        { text: "handle" },
-                        { text: "all" },
-                        { text: "the" },
-                        { text: "technical", className: "text-blue-500" },
-                        { text: "heavy", className: "text-blue-500" },
-                        { text: "lifting.", className: "text-blue-500" },
-                      ]
-                    : [
-                        { text: "Let".replace(/./g, ' ') },
-                        { text: "your".replace(/./g, ' ') },
-                        { text: "AI".replace(/./g, ' ') },
-                        { text: "CTO".replace(/./g, ' ') },
-                        { text: "handle".replace(/./g, ' ') },
-                        { text: "all".replace(/./g, ' ') },
-                        { text: "the".replace(/./g, ' ') },
-                        { text: "technical".replace(/./g, ' ') },
-                        { text: "heavy".replace(/./g, ' ') },
-                        { text: "lifting.".replace(/./g, ' ') },
-                      ]
-                }
-                className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono"
+                words={[
+                  { text: "Not" },
+                  { text: "sure" },
+                  { text: "how" },
+                  { text: "to" },
+                  { text: "turn" },
+                  { text: "your" },
+                  { text: "tech" },
+                  { text: "idea" },
+                  { text: "into" },
+                  { text: "a" },
+                  { text: "startup?" },
+                ]}
+                className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono mb-4"
                 cursorClassName="bg-white"
-                cursorCharacter={showSecond ? "_" : undefined}
-                fadeIn={showSecond}
-                showCursor={showSecond}
+                onDone={() => setShowSecond(true)}
+                cursorCharacter="_"
+                showCursor={!showSecond}
               />
-            </div>
-            {/* Buttons below the animated text */}
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '4rem' }}>
-              <Button
-                size="lg"
-                className="bg-blue-500 text-white rounded-lg font-kode-mono px-8 py-3 text-lg shadow-lg hover:bg-blue-700 transition-colors border-2 border-blue-500"
-              >
-                Try Me
-              </Button>
-              <Button
-                size="lg"
-                className="bg-transparent text-blue-500 border-2 border-blue-500 rounded-lg font-kode-mono px-8 py-3 text-lg shadow-lg hover:bg-blue-500 hover:text-white transition-colors"
-              >
-                Contact Us
-              </Button>
+              <div style={{ minHeight: '1.2em', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                <TypewriterEffectSmooth
+                  words={
+                    showSecond
+                      ? [
+                          { text: "Let" },
+                          { text: "your" },
+                          { text: "AI" },
+                          { text: "CTO" },
+                          { text: "handle" },
+                          { text: "all" },
+                          { text: "the" },
+                          { text: "technical", className: "text-blue-500" },
+                          { text: "heavy", className: "text-blue-500" },
+                          { text: "lifting.", className: "text-blue-500" },
+                        ]
+                      : [
+                          { text: "Let".replace(/./g, ' ') },
+                          { text: "your".replace(/./g, ' ') },
+                          { text: "AI".replace(/./g, ' ') },
+                          { text: "CTO".replace(/./g, ' ') },
+                          { text: "handle".replace(/./g, ' ') },
+                          { text: "all".replace(/./g, ' ') },
+                          { text: "the".replace(/./g, ' ') },
+                          { text: "technical".replace(/./g, ' ') },
+                          { text: "heavy".replace(/./g, ' ') },
+                          { text: "lifting.".replace(/./g, ' ') },
+                        ]
+                  }
+                  className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono"
+                  cursorClassName="bg-white"
+                  cursorCharacter={showSecond ? "_" : undefined}
+                  fadeIn={showSecond}
+                  showCursor={showSecond}
+                />
+              </div>
+              {/* Buttons below the animated text */}
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '4rem' }}>
+                <Button
+                  size="lg"
+                  className="bg-blue-500 text-white rounded-lg font-kode-mono px-8 py-3 text-lg shadow-lg hover:bg-blue-700 transition-colors border-2 border-blue-500"
+                >
+                  Try Me
+                </Button>
+                <Button
+                  size="lg"
+                  className="bg-transparent text-blue-500 border-2 border-blue-500 rounded-lg font-kode-mono px-8 py-3 text-lg shadow-lg hover:bg-blue-500 hover:text-white transition-colors"
+                >
+                  Contact Us
+                </Button>
+              </div>
             </div>
           </div>
         </div>

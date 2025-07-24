@@ -137,3 +137,15 @@ html, body {
     @apply bg-background text-foreground;
   }
 }
+
+.glitch {
+  animation: glitch 0.7s linear;
+}
+@keyframes glitch {
+  0% { text-shadow: 2px 0 red, -2px 0 blue; transform: skewX(0deg); }
+  20% { text-shadow: -2px 0 blue, 2px 0 red; transform: skewX(-2deg); }
+  40% { text-shadow: 2px 2px lime, -2px -2px magenta; transform: skewX(2deg); }
+  60% { text-shadow: -2px 2px cyan, 2px -2px yellow; transform: skewX(-1deg); }
+  80% { text-shadow: 2px 0 red, -2px 0 blue; transform: skewX(1deg); }
+  100% { text-shadow: none; transform: skewX(0deg); }
+}
