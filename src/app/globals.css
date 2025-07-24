@@ -1,9 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
 
 .font-kode-mono {
   font-family: 'Kode Mono', monospace !important;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif !important;
 }
 
 @custom-variant dark (&:is(.dark *));

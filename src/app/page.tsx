@@ -39,30 +39,72 @@ const DecryptedText = ({ text, className = "", duration = 1200 }: DecryptedTextP
   );
 };
 
+// RotatingText component for animated word swap
+type RotatingTextProps = { words: string[]; interval?: number; className?: string };
+const RotatingText = ({ words, interval = 2000, className = "" }: RotatingTextProps) => {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % words.length);
+    }, interval);
+    return () => clearInterval(timer);
+  }, [words, interval]);
+  return <span className={className}>{words[index]}</span>;
+};
+
 export default function Home() {
   const [showSecond, setShowSecond] = useState(false);
+  const [showRotating, setShowRotating] = useState(false);
+  const [showStaticSecondLine, setShowStaticSecondLine] = useState(false);
 
-  // Glitch effect state
+  // Synchronized timer for header, rotating text, and glitch
+  const [currentTick, setCurrentTick] = useState(0);
   const [glitch, setGlitch] = useState(false);
+  const headerPhrases = ["AI CTO AGENT", "CREATE HISTORY"];
+  const rotatingWords = ["startup?", "business?"];
+  const intervalMs = 3000; // 5 seconds for sync
   useEffect(() => {
-    let glitchInterval: NodeJS.Timeout;
-    let glitchTimeout: NodeJS.Timeout;
+    const interval = setInterval(() => {
+      setCurrentTick((tick) => tick + 1);
+      setGlitch(true);
+      setTimeout(() => setGlitch(false), 700); // glitch for 0.7s
+    }, intervalMs);
+    return () => clearInterval(interval);
+  }, []);
+  // Header phrase and rotating word index
+  const headerIndex = currentTick % headerPhrases.length;
+  const rotatingIndex = currentTick % rotatingWords.length;
+  // For DecryptedText re-mount
+  const [headerKey, setHeaderKey] = useState(0);
+  useEffect(() => { setHeaderKey((k) => k + 1); }, [headerIndex]);
+
+  // When the second line animation is done, start rotating text after a short delay
+  useEffect(() => {
     if (showSecond) {
-      // Wait for the second line to finish animating (1s), then start glitch loop
-      glitchTimeout = setTimeout(() => {
-        setGlitch(true);
-        glitchInterval = setInterval(() => {
-          setGlitch(true);
-          setTimeout(() => setGlitch(false), 700); // glitch for 0.7s
-        }, 5000);
-        setTimeout(() => setGlitch(false), 700); // initial glitch
-      }, 1000);
+      const t = setTimeout(() => setShowRotating(true), 1200); // match second line animation duration
+      return () => clearTimeout(t);
     }
-    return () => {
-      clearTimeout(glitchTimeout);
-      clearInterval(glitchInterval);
-    };
   }, [showSecond]);
+
+  // When rotating text is done, show the static second line
+  useEffect(() => {
+    if (showRotating) {
+      const t = setTimeout(() => setShowStaticSecondLine(true), 200); // small delay after rotating starts
+      return () => clearTimeout(t);
+    }
+  }, [showRotating]);
+
+  // Add Montserrat font import to the document head if not already present
+  if (typeof window !== 'undefined') {
+    const id = 'montserrat-font-link';
+    if (!document.getElementById(id)) {
+      const link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap';
+      document.head.appendChild(link);
+    }
+  }
 
   // Header styles
   const headerStyle = {
@@ -84,18 +126,6 @@ export default function Home() {
   const navLinkStyle =
     'text-white text-lg font-kode-mono px-4 py-1 rounded transition-colors duration-200 hover:text-blue-400 hover:bg-blue-900/40';
 
-  // Header DecryptedText loop logic
-  const headerPhrases = ["AI CTO AGENT", "CREATE HISTORY"];
-  const [headerIndex, setHeaderIndex] = useState(0);
-  const [headerKey, setHeaderKey] = useState(0); // to force re-mount for animation
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setHeaderIndex((prev) => (prev + 1) % headerPhrases.length);
-      setHeaderKey((k) => k + 1);
-    }, 5000); // 10 seconds per phrase
-    return () => clearTimeout(timeout);
-  }, [headerIndex]);
-
   return (
     <>
       <header style={headerStyle}>
@@ -108,9 +138,9 @@ export default function Home() {
           />
           <nav style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', minWidth: 0 }}>
             <a href="#" className={navLinkStyle}>Home</a>
+            <a href="#features" className={navLinkStyle}>Features</a>
             <a href="#pricing" className={navLinkStyle}>Pricing</a>
             <a href="#contact" className={navLinkStyle}>Contact</a>
-            <a href="#ctc" className={navLinkStyle + ' bg-blue-500 text-white hover:bg-blue-700 ml-2 px-5'}>CTC</a>
           </nav>
         </div>
       </header>
@@ -140,73 +170,90 @@ export default function Home() {
             }}
           >
             <div className={glitch ? 'glitch' : ''}>
-              <TypewriterEffectSmooth
-                words={[
-                  { text: "Not" },
-                  { text: "sure" },
-                  { text: "how" },
-                  { text: "to" },
-                  { text: "turn" },
-                  { text: "your" },
-                  { text: "tech" },
-                  { text: "idea" },
-                  { text: "into" },
-                  { text: "a" },
-                  { text: "startup?" },
-                ]}
-                className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono mb-4"
-                cursorClassName="bg-white"
-                onDone={() => setShowSecond(true)}
-                cursorCharacter="_"
-                showCursor={!showSecond}
-              />
-              <div style={{ minHeight: '1.2em', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                <TypewriterEffectSmooth
-                  words={
-                    showSecond
-                      ? [
-                          { text: "Let" },
-                          { text: "your" },
-                          { text: "AI" },
-                          { text: "CTO" },
-                          { text: "handle" },
-                          { text: "all" },
-                          { text: "the" },
-                          { text: "technical", className: "text-blue-500" },
-                          { text: "heavy", className: "text-blue-500" },
-                          { text: "lifting.", className: "text-blue-500" },
-                        ]
-                      : [
-                          { text: "Let".replace(/./g, ' ') },
-                          { text: "your".replace(/./g, ' ') },
-                          { text: "AI".replace(/./g, ' ') },
-                          { text: "CTO".replace(/./g, ' ') },
-                          { text: "handle".replace(/./g, ' ') },
-                          { text: "all".replace(/./g, ' ') },
-                          { text: "the".replace(/./g, ' ') },
-                          { text: "technical".replace(/./g, ' ') },
-                          { text: "heavy".replace(/./g, ' ') },
-                          { text: "lifting.".replace(/./g, ' ') },
-                        ]
-                  }
-                  className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono"
-                  cursorClassName="bg-white"
-                  cursorCharacter={showSecond ? "_" : undefined}
-                  fadeIn={showSecond}
-                  showCursor={showSecond}
-                />
+              <div className="rounded-xl px-8 py-3 bg-black/40" style={{ fontWeight: 900, color: '#e5e5e5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {!showRotating ? (
+                  <TypewriterEffectSmooth
+                    words={[
+                      { text: "Not" },
+                      { text: "sure" },
+                      { text: "how" },
+                      { text: "to" },
+                      { text: "turn" },
+                      { text: "your" },
+                      { text: "tech" },
+                      { text: "idea" },
+                      { text: "into" },
+                      { text: "a" },
+                      { text: "startup?" },
+                    ]}
+                    className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center drop-shadow-lg mb-4"
+                    cursorClassName="bg-white"
+                    onDone={() => setShowSecond(true)}
+                    cursorCharacter="_"
+                    showCursor={!showSecond}
+                  />
+                ) : (
+                  <span className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center drop-shadow-lg mb-4">
+                    Not sure how to turn your tech idea into a{' '}
+                    <span className="inline-block ml-2 bg-[#6c47ff] text-white rounded-xl px-6 py-1 font-montserrat font-black text-xl sm:text-3xl md:text-4xl lg:text-5xl">
+                      {rotatingWords[rotatingIndex]}
+                    </span>
+                  </span>
+                )}
+              </div>
+              <div className="rounded-xl px-8 py-3 bg-black/40" style={{ minHeight: '1.2em', width: '100%', display: 'flex', justifyContent: 'center', fontWeight: 900, color: '#e5e5e5', fontFamily: 'Montserrat, sans-serif' }}>
+                {!showStaticSecondLine ? (
+                  <TypewriterEffectSmooth
+                    words={
+                      showSecond
+                        ? [
+                            { text: "Let" },
+                            { text: "your" },
+                            { text: "AI" },
+                            { text: "CTO" },
+                            { text: "handle" },
+                            { text: "all" },
+                            { text: "the" },
+                            { text: "technical", className: "text-blue-500" },
+                            { text: "heavy", className: "text-blue-500" },
+                            { text: "lifting.", className: "text-blue-500" },
+                          ]
+                        : [
+                            { text: "Let".replace(/./g, ' ') },
+                            { text: "your".replace(/./g, ' ') },
+                            { text: "AI".replace(/./g, ' ') },
+                            { text: "CTO".replace(/./g, ' ') },
+                            { text: "handle".replace(/./g, ' ') },
+                            { text: "all".replace(/./g, ' ') },
+                            { text: "the".replace(/./g, ' ') },
+                            { text: "technical".replace(/./g, ' ') },
+                            { text: "heavy".replace(/./g, ' ') },
+                            { text: "lifting.".replace(/./g, ' ') },
+                          ]
+                    }
+                    className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center drop-shadow-lg"
+                    cursorClassName="bg-white"
+                    cursorCharacter={showSecond ? "_" : undefined}
+                    fadeIn={showSecond}
+                    showCursor={showSecond}
+                  />
+                ) : (
+                  <span className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center drop-shadow-lg">
+                    LET YOUR AI CTO HANDLE ALL THE <span className="text-[#6c47ff]">TECHNICAL HEAVY LIFTING.</span>
+                  </span>
+                )}
               </div>
               {/* Buttons below the animated text */}
               <div style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '4rem' }}>
                 <Button
                   size="lg"
-                  className="bg-blue-500 text-white rounded-lg font-kode-mono px-8 py-3 text-lg shadow-lg hover:bg-blue-700 transition-colors border-2 border-blue-500"
+                  className="bg-[#6c47ff] text-white rounded-lg font-kode-mono px-8 py-3 text-lg shadow-lg hover:bg-[#7d5fff] transition-colors border-2 border-[#6c47ff]"
                 >
                   Try Me
                 </Button>
                 <Button
                   size="lg"
-                  className="bg-transparent text-blue-500 border-2 border-blue-500 rounded-lg font-kode-mono px-8 py-3 text-lg shadow-lg hover:bg-blue-500 hover:text-white transition-colors"
+                  className="bg-transparent text-[#6c47ff] border-2 border-[#6c47ff] rounded-lg font-kode-mono px-8 py-3 text-lg shadow-lg hover:bg-[#6c47ff] hover:text-white transition-colors"
                 >
                   Contact Us
                 </Button>
