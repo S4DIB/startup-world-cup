@@ -102,6 +102,9 @@ export const TypewriterEffectSmooth = ({
   words,
   className,
   cursorClassName,
+  onDone,
+  cursorCharacter,
+  fadeIn = false, // <-- add fadeIn prop
 }: {
   words: {
     text: string;
@@ -109,12 +112,15 @@ export const TypewriterEffectSmooth = ({
   }[];
   className?: string;
   cursorClassName?: string;
+  onDone?: () => void;
+  cursorCharacter?: string;
+  fadeIn?: boolean; // <-- add fadeIn prop
 }) => {
   // split text inside of words into array of characters
   const wordsArray = words.map((word) => {
     return {
       ...word,
-      text: word.text.split(""),
+      text: word.text.split("")
     };
   });
   const renderWords = () => {
@@ -126,7 +132,11 @@ export const TypewriterEffectSmooth = ({
               {word.text.map((char, index) => (
                 <span
                   key={`char-${index}`}
-                  className={cn(`dark:text-white text-black `, word.className)}
+                  className={cn(
+                    `text-white`, // force text to be white
+                    word.className?.replace(/opacity-0|hidden/g, "") // remove any opacity-0 or hidden
+                  )}
+                  style={{ opacity: 1, display: "inline" }} // force visible
                 >
                   {char}
                 </span>
@@ -139,7 +149,7 @@ export const TypewriterEffectSmooth = ({
     );
   };
 
-  return (
+  const content = (
     <div className={cn("flex space-x-1 my-6", className)}>
       <motion.div
         className="overflow-hidden pb-2"
@@ -154,6 +164,7 @@ export const TypewriterEffectSmooth = ({
           ease: "linear",
           delay: 1,
         }}
+        onAnimationComplete={onDone}
       >
         <div
           className="text-xs sm:text-base md:text-xl lg:text:3xl xl:text-5xl font-bold"
@@ -161,27 +172,38 @@ export const TypewriterEffectSmooth = ({
             whiteSpace: "nowrap",
           }}
         >
-          {renderWords()}{" "}
-        </div>{" "}
+          {renderWords()} {" "}
+        </div> {" "}
       </motion.div>
-      <motion.span
-        initial={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 1,
-        }}
-        transition={{
-          duration: 0.8,
-
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-        className={cn(
-          "block rounded-sm w-[4px]  h-4 sm:h-6 xl:h-12 bg-blue-500",
-          cursorClassName
-        )}
-      ></motion.span>
+      {cursorCharacter ? (
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+          className={cn("block text-white text-2xl md:text-4xl lg:text-5xl font-extrabold font-kode-mono", cursorClassName)}
+          style={{ lineHeight: 1 }}
+        >
+          {cursorCharacter}
+        </motion.span>
+      ) : (
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+          className={cn(
+            "block rounded-sm w-[4px]  h-4 sm:h-6 xl:h-12 bg-blue-500",
+            cursorClassName
+          )}
+        ></motion.span>
+      )}
     </div>
   );
+  if (fadeIn) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
+        {content}
+      </motion.div>
+    );
+  }
+  return content;
 };
