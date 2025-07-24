@@ -1,8 +1,43 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Particles from "../components/Particles";
 import { TypewriterEffectSmooth } from "../components/ui/typewriter-effect";
 import { Button } from "../components/ui/button";
+
+// DecryptedText animation component
+type DecryptedTextProps = { text: string; className?: string; duration?: number };
+const DecryptedText = ({ text, className = "", duration = 1200 }: DecryptedTextProps) => {
+  const [display, setDisplay] = useState("");
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    let frame = 0;
+    const totalFrames = Math.max(10, Math.floor(duration / 30));
+    intervalRef.current = setInterval(() => {
+      frame++;
+      setDisplay((prev) => {
+        return text
+          .split("")
+          .map((c: string, i: number) => {
+            if (c === " ") return " ";
+            if (frame < totalFrames && Math.random() > frame / totalFrames) {
+              return chars[Math.floor(Math.random() * chars.length)];
+            }
+            return c;
+          })
+          .join("");
+      });
+      if (frame >= totalFrames) {
+        setDisplay(text);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      }
+    }, 30);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [text, duration]);
+  return (
+    <span className={className} style={{ letterSpacing: "0.15em" }}>{display}</span>
+  );
+};
 
 export default function Home() {
   const [showSecond, setShowSecond] = useState(false);
@@ -31,9 +66,11 @@ export default function Home() {
   return (
     <>
       <header style={headerStyle}>
-        <span className="text-white text-2xl sm:text-3xl font-extrabold tracking-widest font-kode-mono">
-          AI CTO AGENT
-        </span>
+        <DecryptedText
+          text="AI CTO AGENT"
+          className="text-white text-2xl sm:text-3xl font-extrabold tracking-widest font-kode-mono"
+          duration={1200}
+        />
         <nav style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <a href="#" className={navLinkStyle}>Home</a>
           <a href="#pricing" className={navLinkStyle}>Pricing</a>
