@@ -63,11 +63,24 @@ export default function Home() {
   const navLinkStyle =
     'text-white text-lg font-kode-mono px-4 py-1 rounded transition-colors duration-200 hover:text-blue-400 hover:bg-blue-900/40';
 
+  // Header DecryptedText loop logic
+  const headerPhrases = ["AI CTO AGENT", "Create history"];
+  const [headerIndex, setHeaderIndex] = useState(0);
+  const [headerKey, setHeaderKey] = useState(0); // to force re-mount for animation
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setHeaderIndex((prev) => (prev + 1) % headerPhrases.length);
+      setHeaderKey((k) => k + 1);
+    }, 5000); // 10 seconds per phrase
+    return () => clearTimeout(timeout);
+  }, [headerIndex]);
+
   return (
     <>
       <header style={headerStyle}>
         <DecryptedText
-          text="AI CTO AGENT"
+          key={headerKey}
+          text={headerPhrases[headerIndex]}
           className="text-white text-2xl sm:text-3xl font-extrabold tracking-widest font-kode-mono"
           duration={1200}
         />
