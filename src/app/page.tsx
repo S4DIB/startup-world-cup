@@ -18,29 +18,41 @@ export default function Home() {
         alphaParticles={false}
         disableRotation={false}
       />
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1, pointerEvents: 'none' }}>
-        <div style={{ pointerEvents: 'auto', width: '100%' }}>
-          <div className="flex flex-col items-center w-full">
-            <TypewriterEffectSmooth
-              words={[
-                { text: "Not" },
-                { text: "sure" },
-                { text: "how" },
-                { text: "to" },
-                { text: "turn" },
-                { text: "your" },
-                { text: "tech" },
-                { text: "idea" },
-                { text: "into" },
-                { text: "a" },
-                { text: "startup?" },
-              ]}
-              className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono mb-4"
-              cursorClassName="bg-white"
-              onDone={() => setShowSecond(true)}
-              cursorCharacter="_"
-            />
-            {showSecond && (
+      <div style={{ position: 'relative', width: '100vw', height: '100vh', zIndex: 1, pointerEvents: 'none' }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            pointerEvents: 'auto',
+          }}
+        >
+          <TypewriterEffectSmooth
+            words={[
+              { text: "Not" },
+              { text: "sure" },
+              { text: "how" },
+              { text: "to" },
+              { text: "turn" },
+              { text: "your" },
+              { text: "tech" },
+              { text: "idea" },
+              { text: "into" },
+              { text: "a" },
+              { text: "startup?" },
+            ]}
+            className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg font-kode-mono mb-4"
+            cursorClassName="bg-white"
+            onDone={() => setShowSecond(true)}
+            cursorCharacter="_"
+          />
+          {showSecond && (
+            <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', width: '100%' }}>
               <TypewriterEffectSmooth
                 words={[
                   { text: "Let" },
@@ -59,8 +71,8 @@ export default function Home() {
                 cursorCharacter="_"
                 fadeIn={true}
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
