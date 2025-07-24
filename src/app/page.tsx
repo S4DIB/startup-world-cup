@@ -51,6 +51,7 @@ export default function Home() {
             cursorClassName="bg-white"
             onDone={() => setShowSecond(true)}
             cursorCharacter="_"
+            showCursor={!showSecond}
           />
           <div style={{ minHeight: '1.2em', width: '100%', display: 'flex', justifyContent: 'center' }}>
             <TypewriterEffectSmooth
@@ -64,9 +65,9 @@ export default function Home() {
                       { text: "handle" },
                       { text: "all" },
                       { text: "the" },
-                      { text: "technical" },
-                      { text: "heavy" },
-                      { text: "lifting." },
+                      { text: "technical", className: "text-blue-500" },
+                      { text: "heavy", className: "text-blue-500" },
+                      { text: "lifting.", className: "text-blue-500" },
                     ]
                   : [
                       { text: "Let".replace(/./g, ' ') },
