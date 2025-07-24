@@ -73,7 +73,8 @@ export default function Home() {
     left: '0',
     zIndex: 10,
     background: 'rgba(10,10,35,0.85)',
-    borderBottom: '2px solid #3b82f6', // Tailwind blue-500
+    borderBottom: '4px solid transparent',
+    borderImage: 'linear-gradient(90deg, transparent 0%, #60a5fa 15%, #a78bfa 85%, transparent 100%) 1',
     boxShadow: '0 2px 16px 0 rgba(0,0,0,0.12)',
     fontFamily: 'Kode Mono, monospace',
     display: 'flex',

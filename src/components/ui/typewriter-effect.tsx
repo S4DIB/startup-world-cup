@@ -90,10 +90,13 @@ export const TypewriterEffect = ({
           repeatType: "reverse",
         }}
         className={cn(
-          "inline-block rounded-sm w-[4px] h-4 md:h-6 lg:h-10 bg-blue-500",
+          "inline-block text-white text-2xl md:text-4xl lg:text-5xl font-extrabold font-kode-mono align-bottom",
           cursorClassName
         )}
-      ></motion.span>
+        style={{ lineHeight: 1 }}
+      >
+        _
+      </motion.span>
     </div>
   );
 };
@@ -177,27 +180,17 @@ export const TypewriterEffectSmooth = ({
           {renderWords()} {" "}
         </div> {" "}
       </motion.div>
-      {showCursor && (cursorCharacter ? (
+      {showCursor && (
         <motion.span
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
-          className={cn("block text-white text-2xl md:text-4xl lg:text-5xl font-extrabold font-kode-mono", cursorClassName)}
+          className={cn("block text-white text-2xl md:text-4xl lg:text-5xl font-extrabold font-kode-mono align-bottom", cursorClassName)}
           style={{ lineHeight: 1 }}
         >
-          {cursorCharacter}
+          _
         </motion.span>
-      ) : (
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
-          className={cn(
-            "block rounded-sm w-[4px]  h-4 sm:h-6 xl:h-12 bg-blue-500",
-            cursorClassName
-          )}
-        ></motion.span>
-      ))}
+      )}
     </div>
   );
   if (fadeIn) {
