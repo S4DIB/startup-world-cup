@@ -138,10 +138,10 @@ export const TypewriterEffectSmooth = ({
                 <span
                   key={`char-${index}`}
                   className={cn(
-                    `text-white`, // force text to be white
+                    `text-white font-montserrat font-black`, // force text to be white and bold
                     word.className?.replace(/opacity-0|hidden/g, "") // remove any opacity-0 or hidden
                   )}
-                  style={{ opacity: 1, display: "inline" }} // force visible
+                  style={{ opacity: 1, display: "inline", fontWeight: 900, fontFamily: 'Montserrat, sans-serif' }} // force visible and bold
                 >
                   {char}
                 </span>

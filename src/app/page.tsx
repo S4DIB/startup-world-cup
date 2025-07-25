@@ -89,8 +89,7 @@ export default function Home() {
   // When rotating text is done, show the static second line
   useEffect(() => {
     if (showRotating) {
-      const t = setTimeout(() => setShowStaticSecondLine(true), 200); // small delay after rotating starts
-      return () => clearTimeout(t);
+      setShowStaticSecondLine(true); // switch immediately
     }
   }, [showRotating]);
 
@@ -170,7 +169,17 @@ export default function Home() {
             }}
           >
             <div className={glitch ? 'glitch' : ''}>
-              <div className="rounded-xl px-8 py-3 bg-black/40" style={{ fontWeight: 900, color: '#e5e5e5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div
+                className="rounded-xl px-8 py-3 bg-black/40 flex items-center justify-center"
+                style={{
+                  fontWeight: 900,
+                  color: '#e5e5e5',
+                  minHeight: '3.5rem',
+                  fontFamily: 'Montserrat, sans-serif',
+                  lineHeight: 1.1,
+                  letterSpacing: '0.02em',
+                }}
+              >
                 {!showRotating ? (
                   <TypewriterEffectSmooth
                     words={[
@@ -193,7 +202,10 @@ export default function Home() {
                     showCursor={!showSecond}
                   />
                 ) : (
-                  <span className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center drop-shadow-lg mb-4">
+                  <span
+                    className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center drop-shadow-lg mb-4"
+                    style={{ lineHeight: 1.1, letterSpacing: '0.02em' }}
+                  >
                     Not sure how to turn your tech idea into a{' '}
                     <span className="inline-block ml-2 bg-[#6c47ff] text-white rounded-xl px-6 py-1 font-montserrat font-black text-xl sm:text-3xl md:text-4xl lg:text-5xl">
                       {rotatingWords[rotatingIndex]}
@@ -201,7 +213,18 @@ export default function Home() {
                   </span>
                 )}
               </div>
-              <div className="rounded-xl px-8 py-3 bg-black/40" style={{ minHeight: '1.2em', width: '100%', display: 'flex', justifyContent: 'center', fontWeight: 900, color: '#e5e5e5', fontFamily: 'Montserrat, sans-serif' }}>
+              <div
+                className="rounded-xl px-8 py-3 bg-black/40 flex items-center justify-center"
+                style={{
+                  minHeight: '3.5rem',
+                  width: '100%',
+                  fontWeight: 900,
+                  color: '#e5e5e5',
+                  fontFamily: 'Montserrat, sans-serif',
+                  lineHeight: 1.1,
+                  letterSpacing: '0.02em',
+                }}
+              >
                 {!showStaticSecondLine ? (
                   <TypewriterEffectSmooth
                     words={
@@ -238,7 +261,10 @@ export default function Home() {
                     showCursor={showSecond}
                   />
                 ) : (
-                  <span className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center drop-shadow-lg">
+                  <span
+                    className="uppercase text-white text-xl sm:text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center drop-shadow-lg"
+                    style={{ lineHeight: 1.1, letterSpacing: '0.02em' }}
+                  >
                     LET YOUR AI CTO HANDLE ALL THE <span className="text-[#6c47ff]">TECHNICAL HEAVY LIFTING.</span>
                   </span>
                 )}
