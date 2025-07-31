@@ -11,7 +11,7 @@ export function ChatContainer() {
   const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // Show sidebar by default
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Initialize with a new session if none exists
@@ -127,21 +127,39 @@ export function ChatContainer() {
       },
     ]);
     setSidebarOpen(false);
+    
+    // Force a re-render of the sidebar
+    setTimeout(() => {
+      window.dispatchEvent(new Event('storage'));
+    }, 100);
   };
 
     return (
     <div className="flex h-full">
-      {/* Sidebar */}
-      <ChatSidebar
-        currentSessionId={currentSession?.id || null}
-        onSessionSelect={handleSessionSelect}
-        onNewSession={handleNewSession}
-        isOpen={sidebarOpen}
-        onToggle={() => setSidebarOpen(!sidebarOpen)}
-      />
+      {/* Sidebar - Always visible on desktop */}
+      <div className="hidden lg:block">
+        <ChatSidebar
+          currentSessionId={currentSession?.id || null}
+          onSessionSelect={handleSessionSelect}
+          onNewSession={handleNewSession}
+          isOpen={true}
+          onToggle={() => {}}
+        />
+      </div>
+
+      {/* Mobile Sidebar */}
+      <div className="lg:hidden">
+        <ChatSidebar
+          currentSessionId={currentSession?.id || null}
+          onSessionSelect={handleSessionSelect}
+          onNewSession={handleNewSession}
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen(!sidebarOpen)}
+        />
+      </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col lg:ml-0">
+      <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="px-4 sm:container flex h-14 items-center">

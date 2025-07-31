@@ -36,6 +36,19 @@ export function ChatSidebar({
     loadSessions();
   }, []);
 
+  // Refresh sessions when component mounts or when sessions change
+  useEffect(() => {
+    const handleStorageChange = () => {
+      loadSessions();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   const loadSessions = () => {
     const allSessions = chatStorage.getAllSessions();
     setSessions(allSessions);
@@ -117,16 +130,17 @@ export function ChatSidebar({
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
-      <motion.div
-        initial={{ x: -300 }}
-        animate={{ x: isOpen ? 0 : -300 }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className={cn(
-          "fixed left-0 top-0 h-full w-80 bg-background border-r z-50 flex flex-col",
-          "lg:relative lg:translate-x-0"
-        )}
-      >
+             {/* Sidebar */}
+       <motion.div
+         initial={{ x: -300 }}
+         animate={{ x: isOpen ? 0 : -300 }}
+         transition={{ type: "spring", damping: 25, stiffness: 200 }}
+         className={cn(
+           "fixed left-0 top-0 h-full w-80 bg-background border-r z-50 flex flex-col",
+           "lg:relative lg:translate-x-0 lg:block"
+         )}
+         style={{ display: isOpen ? 'flex' : 'none' }}
+       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold">Chat History</h2>
