@@ -14,19 +14,29 @@ export function ChatContainer() {
   const [sidebarOpen, setSidebarOpen] = useState(true); // Show sidebar by default
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize with a new session if none exists
+  // Initialize with existing sessions or create a new one
   useEffect(() => {
     if (!currentSession) {
-      const newSession = chatStorage.createSession();
-      setCurrentSession(newSession);
-      setMessages([
-        {
-          id: "1",
-          content: "Hello! I'm your AI CTO. I want to understand your vision completely so I can give you the best technical strategy. Let's start with the most important question:\nWhat's your business idea? Describe it in simple terms - what are you building and why?",
-          sender: "agent",
-          timestamp: new Date(),
-        },
-      ]);
+      const existingSessions = chatStorage.getAllSessions();
+      
+      if (existingSessions.length > 0) {
+        // Load the most recent session
+        const mostRecentSession = existingSessions[0];
+        setCurrentSession(mostRecentSession);
+        setMessages(mostRecentSession.messages);
+      } else {
+        // Create a new session only if no sessions exist
+        const newSession = chatStorage.createSession();
+        setCurrentSession(newSession);
+        setMessages([
+          {
+            id: "1",
+            content: "Hello! I'm your AI CTO. I want to understand your vision completely so I can give you the best technical strategy. Let's start with the most important question:\nWhat's your business idea? Describe it in simple terms - what are you building and why?",
+            sender: "agent",
+            timestamp: new Date(),
+          },
+        ]);
+      }
     }
   }, [currentSession]);
 
@@ -53,6 +63,9 @@ export function ChatContainer() {
     
     // Save to storage immediately
     chatStorage.updateSession(currentSession.id, updatedMessages);
+    
+    // Force sidebar refresh to show the new session immediately
+    window.dispatchEvent(new Event('chat-storage-update'));
     
     setIsLoading(true);
 
@@ -130,7 +143,7 @@ export function ChatContainer() {
     
     // Force a re-render of the sidebar
     setTimeout(() => {
-      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new Event('chat-storage-update'));
     }, 100);
   };
 

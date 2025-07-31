@@ -139,6 +139,8 @@ class ChatStorage {
     
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(sessions));
+      // Dispatch custom event to notify components of storage update
+      window.dispatchEvent(new Event('chat-storage-update'));
     } catch (error) {
       console.error('Error saving chat sessions:', error);
     }

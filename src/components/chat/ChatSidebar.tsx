@@ -42,10 +42,19 @@ export function ChatSidebar({
       loadSessions();
     };
 
+    const handleCustomStorageChange = () => {
+      loadSessions();
+    };
+
+    // Listen for storage events (between tabs)
     window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for custom events (same tab)
+    window.addEventListener('chat-storage-update', handleCustomStorageChange);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('chat-storage-update', handleCustomStorageChange);
     };
   }, []);
 
