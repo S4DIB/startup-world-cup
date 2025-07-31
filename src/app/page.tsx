@@ -274,6 +274,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   className="bg-[#6c47ff] text-white rounded-lg font-kode-mono px-8 py-3 text-lg shadow-lg hover:bg-[#7d5fff] transition-colors border-2 border-[#6c47ff]"
+                  onClick={() => window.location.href = '/chat'}
                 >
                   Try Me
                 </Button>
