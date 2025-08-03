@@ -15,10 +15,10 @@ const DecryptedText = ({ text, className = "", duration = 1200 }: DecryptedTextP
     const totalFrames = Math.max(10, Math.floor(duration / 30));
     intervalRef.current = setInterval(() => {
       frame++;
-      setDisplay((prev) => {
-        return text
-          .split("")
-          .map((c: string, i: number) => {
+              setDisplay(() => {
+          return text
+            .split("")
+            .map((c: string) => {
             if (c === " ") return " ";
             if (frame < totalFrames && Math.random() > frame / totalFrames) {
               return chars[Math.floor(Math.random() * chars.length)];
@@ -39,23 +39,15 @@ const DecryptedText = ({ text, className = "", duration = 1200 }: DecryptedTextP
   );
 };
 
-// RotatingText component for animated word swap
-type RotatingTextProps = { words: string[]; interval?: number; className?: string };
-const RotatingText = ({ words, interval = 2000, className = "" }: RotatingTextProps) => {
-  const [index, setIndex] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % words.length);
-    }, interval);
-    return () => clearInterval(timer);
-  }, [words, interval]);
-  return <span className={className}>{words[index]}</span>;
-};
+
 
 export default function Home() {
   const [showSecond, setShowSecond] = useState(false);
   const [showRotating, setShowRotating] = useState(false);
   const [showStaticSecondLine, setShowStaticSecondLine] = useState(false);
+  const [waitlistEmail, setWaitlistEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [waitlistMessage, setWaitlistMessage] = useState("");
 
   // Synchronized timer for header, rotating text, and glitch
   const [currentTick, setCurrentTick] = useState(0);
@@ -105,11 +97,44 @@ export default function Home() {
     }
   }
 
+  // Handle waitlist submission
+  const handleWaitlistSubmit = async () => {
+    if (!waitlistEmail.trim()) {
+      setWaitlistMessage("Please enter your email address");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setWaitlistMessage("");
+
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: waitlistEmail.trim() })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setWaitlistMessage(data.message);
+        setWaitlistEmail(""); // Clear the input
+      } else {
+        setWaitlistMessage(data.error || "Failed to join waitlist. Please try again.");
+      }
+    } catch (error) {
+      console.error('Waitlist submission error:', error);
+      setWaitlistMessage("Network error. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Header styles
   const headerStyle = {
     width: '100vw',
     padding: '0.5rem clamp(1rem, 4vw, 2.5rem)',
-    position: 'fixed' as 'fixed',
+    position: 'fixed' as const,
     top: '0',
     left: '0',
     zIndex: 10,
@@ -137,6 +162,7 @@ export default function Home() {
           />
           <nav style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', minWidth: 0 }}>
             <a href="#" className={navLinkStyle}>Home</a>
+            <a href="/about" className={navLinkStyle}>About</a>
             <a href="#features" className={navLinkStyle}>Features</a>
             <a href="#pricing" className={navLinkStyle}>Pricing</a>
             <a href="#contact" className={navLinkStyle}>Contact</a>
@@ -284,6 +310,75 @@ export default function Home() {
                 >
                   Contact Us
                 </Button>
+              </div>
+              
+              {/* Development Status & Waitlist Section */}
+              <div style={{ 
+                width: '100%', 
+                display: 'flex', 
+                justifyContent: 'center', 
+                marginTop: '6rem',
+                pointerEvents: 'auto'
+              }}>
+                <div className="bg-black/60 backdrop-blur-sm rounded-2xl p-8 max-w-2xl border border-[#6c47ff]/30">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse mr-3"></div>
+                      <span className="text-yellow-400 font-kode-mono text-lg font-bold">MVP IN DEVELOPMENT</span>
+                    </div>
+                    
+                    <h3 className="text-white text-2xl font-bold mb-4 font-montserrat">
+                      🚀 Early Access Coming Soon
+                    </h3>
+                    
+                    <p className="text-gray-300 mb-6 leading-relaxed">
+                                             This AI CTO Agent is currently in active development. We&apos;re building the most advanced 
+                      technical advisor for non-technical founders. Join our waitlist to be among the first 
+                      to experience the future of startup technical guidance.
+                    </p>
+                    
+                                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                       <div className="relative flex-1 max-w-sm">
+                         <input
+                           type="email"
+                           placeholder="Enter your email"
+                           value={waitlistEmail}
+                           onChange={(e) => setWaitlistEmail(e.target.value)}
+                           onKeyPress={(e) => e.key === 'Enter' && handleWaitlistSubmit()}
+                           className="w-full px-4 py-3 bg-black/40 border border-[#6c47ff]/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#6c47ff] transition-colors font-kode-mono"
+                           style={{ backdropFilter: 'blur(10px)' }}
+                           disabled={isSubmitting}
+                         />
+                       </div>
+                       <Button
+                         size="lg"
+                         className="bg-[#6c47ff] text-white rounded-lg font-kode-mono px-6 py-3 text-base shadow-lg hover:bg-[#7d5fff] transition-colors border-2 border-[#6c47ff] whitespace-nowrap disabled:opacity-50"
+                         onClick={handleWaitlistSubmit}
+                         disabled={isSubmitting}
+                       >
+                         {isSubmitting ? "Joining..." : "Join Waitlist"}
+                       </Button>
+                     </div>
+                     
+                     {waitlistMessage && (
+                       <div className={`mt-4 text-sm font-kode-mono ${
+                         waitlistMessage.includes("Thank you") 
+                           ? "text-green-400" 
+                           : "text-red-400"
+                       }`}>
+                         {waitlistMessage}
+                       </div>
+                     )}
+                    
+                    <div className="mt-6 text-sm text-gray-400 font-kode-mono">
+                      <span className="text-[#6c47ff]">✓</span> Early access to full features
+                      <br />
+                      <span className="text-[#6c47ff]">✓</span> Priority support & updates
+                      <br />
+                      <span className="text-[#6c47ff]">✓</span> Exclusive founder community
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

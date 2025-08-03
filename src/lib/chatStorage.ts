@@ -25,12 +25,23 @@ class ChatStorage {
       const stored = localStorage.getItem(this.STORAGE_KEY);
       if (!stored) return [];
       
-      const sessions = JSON.parse(stored);
-      return sessions.map((session: any) => ({
+      const sessions = JSON.parse(stored) as Array<{
+        id: string;
+        title: string;
+        messages: Array<{
+          id: string;
+          content: string;
+          sender: "user" | "agent";
+          timestamp: string;
+        }>;
+        createdAt: string;
+        updatedAt: string;
+      }>;
+      return sessions.map((session) => ({
         ...session,
         createdAt: new Date(session.createdAt),
         updatedAt: new Date(session.updatedAt),
-        messages: session.messages.map((msg: any) => ({
+        messages: session.messages.map((msg) => ({
           ...msg,
           timestamp: new Date(msg.timestamp)
         }))

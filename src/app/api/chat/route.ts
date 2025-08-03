@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
+interface ConversationMessage {
+  sender: string;
+  content: string;
+}
+
+interface ChatRequest {
+  message: string;
+  conversationHistory?: ConversationMessage[];
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { message, conversationHistory = [] } = await request.json();
+    const { message, conversationHistory = [] }: ChatRequest = await request.json();
 
     if (!message) {
       return NextResponse.json(
@@ -68,7 +78,7 @@ Remember: You're conducting a strategic discovery session, not an interrogation.
 
     // Build conversation context
     const conversationContext = conversationHistory.length > 0 
-      ? `\n\nPrevious conversation:\n${conversationHistory.map((msg: any) => `${msg.sender}: ${msg.content}`).join('\n')}\n\n`
+      ? `\n\nPrevious conversation:\n${conversationHistory.map((msg: ConversationMessage) => `${msg.sender}: ${msg.content}`).join('\n')}\n\n`
       : '';
 
     // Create the full prompt
@@ -109,7 +119,15 @@ Remember: You're conducting a strategic discovery session, not an interrogation.
       );
     }
 
-    const data = await response.json();
+    const data = await response.json() as {
+      candidates?: Array<{
+        content?: {
+          parts?: Array<{
+            text?: string;
+          }>;
+        };
+      }>;
+    };
     
     // Extract the response text from Gemini
     const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;

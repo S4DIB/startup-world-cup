@@ -1,4 +1,4 @@
-import { Message } from "./ChatContainer";
+import { Message } from "@/lib/chatStorage";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { User, Bot } from "lucide-react";
